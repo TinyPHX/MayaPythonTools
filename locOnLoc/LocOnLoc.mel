@@ -1,0 +1,508 @@
+// -------------------------------------------------------------------
+//  Script:			LocOnLoc.mel v4.6
+//
+//  Author: 		Martin Kulig
+// 		 			www.shadowdancer.de
+// 					martin@shadowdancer.de
+//
+//  Date:			15.05.2011
+//
+//  Description:	Create locators on selections of whatever.
+//
+//  Usage:			Select objects or components and run the script.
+//
+// -------------------------------------------------------------------
+
+
+// ------------------------------------------------------------------------------------
+// Select a new object for locator rotation
+// ------------------------------------------------------------------------------------
+global proc LoLSelectObject()
+{
+textField -edit -text `LoLObjectName` txtRotationObject;
+}
+
+
+// ------------------------------------------------------------------------------------
+// get selected object name
+// ------------------------------------------------------------------------------------
+global proc string LoLObjectName()
+{
+	string $baseMeshName = "Nothing Selected";
+	string $selectedWhatever[] = `ls -selection -flatten`;
+
+	int $HowManyWhatever = `size ($selectedWhatever)`;
+	if ($HowManyWhatever != 0)  
+	{
+		
+		$baseMeshName = `LoLNameCleaner $selectedWhatever[0]`;
+
+		for ( $counter = 0; $counter < $HowManyWhatever; $counter++ ) 
+		{
+			if ($baseMeshName != `LoLNameCleaner $selectedWhatever[$counter]`) $baseMeshName = "Multiple Objects";
+		}
+    }
+
+	return $baseMeshName;
+}
+
+
+// ------------------------------------------------------------------------------------
+// get the name without .vtx, .cv ...
+// ------------------------------------------------------------------------------------
+global proc string LoLNameCleaner(string $sFullName)
+{
+		// cut name to get rotation and scale for a component from the base mesh
+		$baseMeshName = `match "[^.]+" $sFullName`;
+		
+		// safety first!
+		if  (`nodeType $baseMeshName` != "transform")  
+		{
+			string $getNameTransform[] = `listTransforms $baseMeshName`;
+			$baseMeshName = $getNameTransform[0];
+		}
+
+	return $baseMeshName;
+}
+
+			
+			
+// ------------------------------------------------------------------------------------
+// get scale from first selected object and change ui to scale x,y,z
+// ------------------------------------------------------------------------------------
+global proc originalScale(int $selectionCount, string $selectedWhatever[])
+{
+	int $HowManyWhatever = `size ($selectedWhatever)`;
+	if ($HowManyWhatever != 0)
+		{	
+		// cut name to get rotation and scale for a component from the base mesh
+		string $baseMeshName = `match "[^.]+" $selectedWhatever[$selectionCount]`;
+		
+		// safety first!
+		if  (`nodeType $baseMeshName` != "transform")  
+			{
+			string $getNameTransform[] = `listTransforms $baseMeshName`;
+			$baseMeshName = $getNameTransform[0];
+			}
+		
+		float $scaleFromThing[] = `xform -query -scale -relative $baseMeshName`;	
+		
+		floatField -edit -value $scaleFromThing[0] -editable false floatFlieldX;
+		floatField -edit -value $scaleFromThing[1] -editable false -visible true floatFlieldY;
+		floatField -edit -value $scaleFromThing[2] -editable false -visible true floatFlieldZ;
+		}
+	else
+	print "Nothing selected!";
+}
+	
+// ------------------------------------------------------------------------------------
+// uniformize scale in y and z hidden field from scale x field
+// ------------------------------------------------------------------------------------	
+global proc uniScale()
+	{
+	if (`radioCollection -q -select scaleRadioBGrp` != "scaleRadioOriginal")
+		{
+		floatField -edit -value `floatField -query -value floatFlieldX` floatFlieldY;
+		floatField -edit -value `floatField -query -value floatFlieldX` floatFlieldZ;
+		}
+	}
+
+// ------------------------------------------------------------------------------------
+// UI
+// ------------------------------------------------------------------------------------
+global proc LocOnLocUI()
+	{
+	print "-------------------------------------------------------------------------------------------- \n";
+	print "LocOnLoc.mel v4.6 - (c) 2011 by Martin Kulig \n";
+
+	// window 
+	string $windowLOL = "windowLOL";
+	if (`window -exists $windowLOL`) 
+	{
+		deleteUI -window $windowLOL;
+	}
+	
+	window -title "LocOnLoc.mel v4.6" -sizeable true -maximizeButton false $windowLOL;
+
+	columnLayout;	
+	rowLayout -numberOfColumns 4 -columnWidth 1 90 -columnWidth 2 80 -columnWidth 3 80 -columnWidth 4 80;
+		text "Locator Scale:";
+		floatField -precision 3 -width 70 -value 1 -editable false -visible true floatFlieldX;
+		floatField -precision 3 -width 70 -value 1 -editable false -visible false floatFlieldY;
+		floatField -precision 3 -width 70 -value 1 -editable false -visible false floatFlieldZ;
+	setParent ..;	
+
+	columnLayout;	
+	rowLayout -numberOfColumns 5 -columnWidth 1 80 -columnWidth 2 80 -columnWidth 3 80 -columnWidth 4 80  -columnWidth 5 80 ;	
+    radioCollection scaleRadioBGrp;
+		radioButton -label "Scale 1" -select -onCommand "floatField -edit -value 1 -editable false floatFlieldX;floatField -edit -value 1 -visible false floatFlieldY;floatField -edit -value 1 -visible false floatFlieldZ;" scaleRadio1;
+		radioButton -label "Scale 10" -onCommand "floatField -edit -value 10 -editable false floatFlieldX;floatField -edit -value 10 -visible false floatFlieldY;floatField -edit -value 10 -visible false floatFlieldZ;" scaleRadio10;
+		radioButton -label "Scale 100" -onCommand "floatField -edit -value 100 -editable false floatFlieldX;floatField -edit -value 100 -visible false floatFlieldY;floatField -edit -value 100 -visible false floatFlieldZ;" scaleRadio100;
+		radioButton -label "Original" -onCommand "string $selectedWhatever[] = `ls -selection -flatten`; originalScale 0 $selectedWhatever;" scaleRadioOriginal;
+		radioButton -label "Custom" -onCommand "floatField -edit -editable true floatFlieldX;floatField -edit -visible false floatFlieldY;floatField -edit -visible false floatFlieldZ;" scaleRadioCustom;
+	setParent ..;
+	
+	columnLayout;
+		separator -width 400 -height 15;
+		
+		rowLayout -numberOfColumns 3 -columnWidth 1 100 -columnWidth 2 220 -columnWidth 3 80;
+			text "Locator Rotation:";
+			textField -text `LoLObjectName` -width 215 -editable false txtRotationObject;
+			button -width 60 -height 22 -label "Select" -command LoLSelectObject;
+		setParent ..;
+		
+		radioButtonGrp
+			  -numberOfRadioButtons 4
+			  -columnWidth 1 100 -columnWidth 2 100 -columnWidth 3 100 -columnWidth 4 100
+			  -labelArray4 "Object Rot." "Object Normal" "Custom Object" "Custom Aim"
+			  -select 1
+			bakeRadioBGrp;			
+		separator -width 400 -height 15;		
+	setParent ..;
+	
+	rowLayout -numberOfColumns 2 -columnWidth 1 160 -columnWidth 2 160;
+		checkBox -label "Bake Animation?" bakeCheck;
+		checkBox -label "Group?" -value 0 LOLgroupCheck;
+	setParent ..;
+	
+	separator -width 400 -height 15;
+			
+	rowLayout -numberOfColumns 2 -columnWidth 1 90 -columnWidth 2 290;
+	text "Time Range: ";
+	progressBar -maxValue 100 -width 290 -isInterruptable true keyframeProgress;
+	setParent ..;
+	
+	rowLayout -numberOfColumns 2 -columnWidth 1 90 -columnWidth 2 290;
+	text "Locator Cycle: ";
+	progressBar -maxValue 100 -width 290 locatorProgress;
+	setParent ..;
+
+	separator -width 400 -height 15;
+	
+	rowLayout -numberOfColumns 2 -columnWidth 1 80 -columnWidth 2 80;
+		button -width 60 -height 22 -label "Start" -command "uniScale; createLocators;";
+		button -width 60 -height 22 -label "Close" -command "deleteUI -window windowLOL;";
+	setParent ..;
+	
+	showWindow $windowLOL;
+	window -edit -widthHeight 400 245 $windowLOL;
+	}	
+
+// ------------------------------------------------------------------------------------
+// bake animation procedure for all selected stuff to all locators at once in selected time range
+// ------------------------------------------------------------------------------------
+global proc bakeAllLocators (string $LocOnLocLocator[], string $selectedWhatever[], int $HowManyWhatever)
+	{
+	undoInfo -stateWithoutFlush false;
+	$startTime = `timerX`;
+	
+	int $counter = 0;
+	int $TimePercent = 0;
+	int $cyclePercent = 0;
+	
+	global string $gMainProgressBar;
+	
+	progressBar -edit
+    -beginProgress
+    -isInterruptable true
+    -status "LocOnLoc Bake Animation"
+    -maxValue 100
+    $gMainProgressBar;
+
+	// prepare for bake animation
+	string $timeRange = `playbackOptions -q -min` + ":" + `playbackOptions -q -max`;
+	int $TimeRangeStart = `playbackOptions -q -min`;
+	int $TimeRangeEnd = (`playbackOptions -q -max` + 1);
+	string $ModelPanels[] = `getPanel -type modelPanel`;
+	int $HowManyModelPanels = `size ($ModelPanels)`;
+	string $defaultInTangent[] = `keyTangent -query -global -itt`;
+	string $defaultOutTangent[] = `keyTangent -query -global -ott`;	
+	
+	// turn off everything but locators and set animation defaults
+	for ( $PanelCount = 0; $PanelCount < $HowManyModelPanels; $PanelCount++ ) 
+		{
+		modelEditor -e -allObjects 0 $ModelPanels[$PanelCount];
+		modelEditor -e -locators 1 $ModelPanels[$PanelCount];
+		}			
+	keyTangent -global -itt linear;
+	keyTangent -global -ott linear;
+
+	select -clear;
+	
+	// Backofen	
+	for ( $currentTime = $TimeRangeStart; $currentTime < $TimeRangeEnd; $currentTime++ ) 
+		{				
+		for ( $counter = 0; $counter < $HowManyWhatever; $counter++ ) 
+			{
+			currentTime $currentTime;
+			
+			// cut name to get rotation and scale for a component from the base mesh
+			string $baseMeshName = `match "[^.]+" $selectedWhatever[$counter]`;
+			
+			// safety first!
+			if  (`nodeType $baseMeshName` != "transform")  
+				{
+				string $getNameTransform[] = `listTransforms $baseMeshName`;
+				$baseMeshName = $getNameTransform[0];
+				}			
+										
+			float $scaleFromThing[] = `xform -query -scale -relative $baseMeshName`;
+
+			// change scale based on ui settings
+			if (`radioCollection -q -select scaleRadioBGrp` != "scaleRadioOriginal")
+				{
+				// get scale from Locator Scale X,Y,Z Fields	
+				$scaleFromThing[0] = `floatField -query -value floatFlieldX`;
+				$scaleFromThing[1] = `floatField -query -value floatFlieldY`;
+				$scaleFromThing[2] = `floatField -query -value floatFlieldZ`;
+				}
+
+			// create locator position
+			LOLposition $selectedWhatever[$counter] $LocOnLocLocator[$counter] $baseMeshName;
+			
+			scale $scaleFromThing[0] $scaleFromThing[1] $scaleFromThing[2] $LocOnLocLocator[$counter];
+			
+			setKeyframe -attribute "translate" -attribute "scale" $LocOnLocLocator[$counter];
+			
+			
+			// rotate locator based on ui settings
+			if (`radioButtonGrp -query -select bakeRadioBGrp` == 2)
+			{
+				string $tempNormalConstraint[] = `normalConstraint -weight 1 -aimVector 0 1 0 -upVector 0 1 0 -worldUpType "objectrotation" -worldUpVector 0 1 0 -worldUpObject $baseMeshName $selectedWhatever[$counter] $LocOnLocLocator[$counter]`;
+				setKeyframe -attribute "rotate" $LocOnLocLocator[$counter];
+				delete $tempNormalConstraint[0];
+			}		
+			else if (`radioButtonGrp -query -select bakeRadioBGrp` == 3 && `textField -q -text txtRotationObject` != "Multiple Objects")
+			{
+				string $NewRotationObject = `textField -q -text txtRotationObject`;
+				float $rotiFromThing[] = `xform -query -worldSpace -absolute -rotation $NewRotationObject`;
+				rotate $rotiFromThing[0] $rotiFromThing[1] $rotiFromThing[2] $LocOnLocLocator[$counter];
+				setKeyframe -attribute "rotate" $LocOnLocLocator[$counter];
+			}	
+			else if (`radioButtonGrp -query -select bakeRadioBGrp` == 4 && `textField -q -text txtRotationObject` != "Multiple Objects")
+			{
+				string $NewRotationObject = `textField -q -text txtRotationObject`;
+				string $tempAimConstraint[] = `aimConstraint -offset 0 0 0 -weight 1 -aimVector 0 0 1 -upVector 0 1 0 -worldUpType "objectrotation" -worldUpVector 0 1 0 -worldUpObject $NewRotationObject $NewRotationObject $LocOnLocLocator[$counter]`;
+				setKeyframe -attribute "rotate" $LocOnLocLocator[$counter];
+				delete $tempAimConstraint[0];			
+			}
+			else
+			{
+				float $rotiFromThing[] = `xform -query -worldSpace -absolute -rotation $baseMeshName`;
+				rotate $rotiFromThing[0] $rotiFromThing[1] $rotiFromThing[2] $LocOnLocLocator[$counter];
+				setKeyframe -attribute "rotate" $LocOnLocLocator[$counter];
+			}			
+							
+			$cyclePercent = ( (float($counter) + 1) / (float($HowManyWhatever) / 100) );
+			progressBar -edit -progress $cyclePercent locatorProgress;
+			
+			if ( `progressBar -query -isCancelled keyframeProgress` ) break;
+			}
+			$TimePercent = ( float($currentTime - $TimeRangeStart) / (float(($TimeRangeEnd - 1) - $TimeRangeStart) / 100) );
+			progressBar -edit -progress $TimePercent keyframeProgress;
+			
+			if(`progressBar -query -isCancelled $gMainProgressBar`)
+				break;
+
+			progressBar -edit -progress $TimePercent $gMainProgressBar;		
+		}
+	progressBar -edit -endProgress $gMainProgressBar;
+
+	select -replace $LocOnLocLocator[0];
+	
+	// set default keyframes back
+	keyTangent -global -itt $defaultInTangent[0];
+	keyTangent -global -ott $defaultOutTangent[0];	
+
+	// everything on again
+	for ( $PanelCount = 0; $PanelCount < $HowManyModelPanels; $PanelCount++ ) 
+		{
+		modelEditor -e -allObjects 1 $ModelPanels[$PanelCount];
+		}				
+	
+	// free up some memory
+	clear $selectedWhatever;
+	clear $LocOnLocLocator;
+	
+	$totalTime = `timerX -startTime $startTime`;
+	undoInfo -stateWithoutFlush true;
+	print ("LocOnLoc Bake Animation done for " + $HowManyWhatever + " locators in timerange " + $TimeRangeStart + ":" + $currentTime + ". Elapsed time: " + $totalTime + " seconds.\n");
+	}
+
+// ------------------------------------------------------------------------------------
+// get position and move locator procedure
+// ------------------------------------------------------------------------------------
+global proc LOLposition (string $selectedWhatever, string $LocOnLocLocator, string $baseMeshName)
+		{
+		// get position from move tool
+		select -replace $selectedWhatever;
+		MoveTool;
+		float $posiFromThing[] = `manipMoveContext -query -position Move`;
+
+		// get mesh preview display smoothness
+		int $polySmoothy[] = `displaySmoothness -q -polygonObject $selectedWhatever`;
+					
+		// Locator to face
+		if (`match "\\.f\\[" $selectedWhatever` == ".f[")
+			{
+			// awesome match face center position technology!
+			select -replace $selectedWhatever;
+			string $pokerFace[] = `polyPoke`;
+			ConvertSelectionToVertices;
+			ShrinkPolygonSelectionRegion;
+			string $faceCenter[] = `ls -selection`;
+			float $posiFaceCenter[] = `xform -query -worldSpace -absolute -translation $faceCenter[0]`;	
+			move $posiFaceCenter[0] $posiFaceCenter[1] $posiFaceCenter[2] $LocOnLocLocator;
+			delete $pokerFace[0];
+			select -replace $LocOnLocLocator;
+			}
+			
+		// Locator to smooth mesh preview vertex
+		else if ($polySmoothy[0] > 1 && `match "\\.vtx\\[" $selectedWhatever` == ".vtx[")
+			{
+			select -replace $baseMeshName;
+			int $smoothLevel = `getAttr $baseMeshName.smoothLevel`;
+			string $tempPolySmooth[] = `polySmooth -continuity 1 -divisions $smoothLevel -suv 1 -keepBorder 0 -keepSelectionBorder 1`;
+			
+			// get new position from move tool
+			select -replace $selectedWhatever;
+			MoveTool;
+			float $posiFromThing[] = `manipMoveContext -query -position Move`;
+			
+			delete $tempPolySmooth[0];
+			
+			move $posiFromThing[0] $posiFromThing[1] $posiFromThing[2] $LocOnLocLocator;
+						
+			select -replace $LocOnLocLocator;
+			}	
+				
+		// Locator to vertex, edge center, control vertex and transform
+		else 
+			{	
+			move $posiFromThing[0] $posiFromThing[1] $posiFromThing[2] $LocOnLocLocator;
+			}
+		}
+	
+	
+// ------------------------------------------------------------------------------------
+// Create Locators
+// ------------------------------------------------------------------------------------
+
+global proc createLocators ()
+	{	
+	string $LOL_Locators[] = {};
+	string $LocOnLocLocator[] = {};
+	string $selectedWhatever[] = `ls -selection -flatten`;
+	int $HowManyWhatever = `size ($selectedWhatever)`;
+	string $LocatorGroup;
+	
+	// check if something is selected	
+	if ($HowManyWhatever != 0)
+		{
+		print "-------------------------------------------------------------------------------------------- \n";	
+
+		// create locator group
+		if (`checkBox -query -value LOLgroupCheck` == 1)
+			{
+			$LocatorGroup = `group -em -name LocOnLoc_group`;
+			}
+			
+		// repeat for all selected stuff and create a locator for each
+		for ( $counter = 0; $counter < $HowManyWhatever; $counter++ ) 
+			{
+			// cut name to get rotation and scale for a component from the base mesh
+			string $baseMeshName = `match "[^.]+" $selectedWhatever[$counter]`;
+				
+			// safety first!
+			if  (`nodeType $baseMeshName` != "transform")  
+				{
+				string $getNameTransform[] = `listTransforms $baseMeshName`;
+				$baseMeshName = $getNameTransform[0];
+				}
+									
+			// make sure that maya isn´t angry about the name
+			$LOL_Locators[$counter] = "Locator_" + $selectedWhatever[$counter];
+			$LOL_Locators[$counter] = `substitute "\\:" $LOL_Locators[$counter] "_"`;
+			$LOL_Locators[$counter] = `substitute "\\." $LOL_Locators[$counter] "_"`;
+			$LOL_Locators[$counter] = `substitute "\\[" $LOL_Locators[$counter] "_"`;
+			$LOL_Locators[$counter] = `substitute "\\]" $LOL_Locators[$counter] ""`;	
+			if (`match "\\.cv\\[" $selectedWhatever[$counter]` == ".cv[")
+				{
+				$LOL_Locators[$counter] = `substitute "\\[" $LOL_Locators[$counter] "_"`;
+				$LOL_Locators[$counter] = `substitute "\\]" $LOL_Locators[$counter] ""`;
+				}	
+			
+			// create new locator, rename and group it
+			string $tempName[] = `spaceLocator -name LOL_Locator_tempName`;
+			if (`checkBox -query -value LOLgroupCheck` == 1)
+				{
+				parent $tempName[0] $LocatorGroup;
+				}	
+			string $newTempName = `rename $tempName[0] $LOL_Locators[$counter]`;
+			$LocOnLocLocator[$counter] = $newTempName;	
+			
+			// set rotation order
+			if (`attributeExists "rotateOrder" $selectedWhatever[$counter]`)
+				{
+				int $rotiOrder = `getAttr ($selectedWhatever[$counter] + ".rotateOrder")`;
+				setAttr ($LocOnLocLocator[$counter] + ".rotateOrder") $rotiOrder;
+				}
+				
+			// create locator position
+			LOLposition $selectedWhatever[$counter] $LocOnLocLocator[$counter] $baseMeshName;
+			print ($LocOnLocLocator[$counter] + " created. \n");
+
+			// rotate locator based on ui settings
+			if (`radioButtonGrp -query -select bakeRadioBGrp` == 2)
+			{
+				string $tempNormalConstraint[] = `normalConstraint -weight 1 -aimVector 0 1 0 -upVector 0 1 0 -worldUpType "objectrotation" -worldUpVector 0 1 0 -worldUpObject $baseMeshName $selectedWhatever[$counter] $LocOnLocLocator[$counter]`;
+				delete $tempNormalConstraint[0];
+			}		
+			else if (`radioButtonGrp -query -select bakeRadioBGrp` == 3 && `textField -q -text txtRotationObject` != "Multiple Objects")
+			{
+				string $NewRotationObject = `textField -q -text txtRotationObject`;
+				float $rotiFromThing[] = `xform -query -worldSpace -absolute -rotation $NewRotationObject`;
+				rotate $rotiFromThing[0] $rotiFromThing[1] $rotiFromThing[2] $LocOnLocLocator[$counter];				
+			}
+			else if (`radioButtonGrp -query -select bakeRadioBGrp` == 4 && `textField -q -text txtRotationObject` != "Multiple Objects")
+			{
+				string $NewRotationObject = `textField -q -text txtRotationObject`;
+				string $tempAimConstraint[] = `aimConstraint -offset 0 0 0 -weight 1 -aimVector 0 0 1 -upVector 0 1 0 -worldUpType "objectrotation" -worldUpVector 0 1 0 -worldUpObject $NewRotationObject $NewRotationObject $LocOnLocLocator[$counter]`;
+				delete $tempAimConstraint[0];			
+			}			
+			else
+			{
+				float $rotiFromThing[] = `xform -query -worldSpace -absolute -rotation $baseMeshName`;
+				rotate $rotiFromThing[0] $rotiFromThing[1] $rotiFromThing[2] $LocOnLocLocator[$counter];
+			}
+		
+			// change scale based on ui settings
+			if (`radioCollection -q -select scaleRadioBGrp` != "scaleRadioOriginal")
+				{
+				// get scale from Locator Scale X,Y,Z Fields	
+				$scaleFromThing[0] = `floatField -query -value floatFlieldX`;
+				$scaleFromThing[1] = `floatField -query -value floatFlieldY`;
+				$scaleFromThing[2] = `floatField -query -value floatFlieldZ`;
+				scale $scaleFromThing[0] $scaleFromThing[1] $scaleFromThing[2] $LocOnLocLocator[$counter];
+				}
+			else 
+				{
+				float $scaleFromThing[] = `xform -query -scale -relative $baseMeshName`;
+				scale $scaleFromThing[0] $scaleFromThing[1] $scaleFromThing[2] $LocOnLocLocator[$counter];
+				}
+			}
+			
+		// free up some memory
+		clear $LOL_Locators;
+
+		if (`checkBox -query -value bakeCheck` == 1)
+			{
+			print "-------------------------------------------------------------------------------------------- \n";
+			print "LocOnLoc Bake Animation in progress... Press ESC to Cancel. \n";
+			bakeAllLocators $LocOnLocLocator $selectedWhatever $HowManyWhatever;	
+			}
+		}
+		else
+		print "Nothing selected!";
+	}
+LocOnLocUI;

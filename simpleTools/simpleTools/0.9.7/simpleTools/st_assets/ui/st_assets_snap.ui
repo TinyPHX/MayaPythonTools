@@ -1,0 +1,845 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SnapWindow</class>
+ <widget class="QMainWindow" name="SnapWindow">
+  <property name="windowModality">
+   <enum>Qt::NonModal</enum>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>260</width>
+    <height>394</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>260</width>
+    <height>394</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>260</width>
+    <height>394</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Snapshot</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="cw_verticalLayout">
+    <property name="spacing">
+     <number>1</number>
+    </property>
+    <property name="margin">
+     <number>2</number>
+    </property>
+    <item>
+     <widget class="QGroupBox" name="horizontalGroupBox">
+      <property name="autoFillBackground">
+       <bool>false</bool>
+      </property>
+      <layout class="QHBoxLayout" name="l_horizontalLayout">
+       <property name="spacing">
+        <number>2</number>
+       </property>
+       <property name="leftMargin">
+        <number>9</number>
+       </property>
+       <property name="topMargin">
+        <number>2</number>
+       </property>
+       <property name="rightMargin">
+        <number>9</number>
+       </property>
+       <property name="bottomMargin">
+        <number>4</number>
+       </property>
+       <item>
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Lens  </string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QDoubleSpinBox" name="doubleSpinBox">
+         <property name="focusPolicy">
+          <enum>Qt::StrongFocus</enum>
+         </property>
+         <property name="toolTip">
+          <string>Input value to change snapshot camera focalLength</string>
+         </property>
+         <property name="frame">
+          <bool>true</bool>
+         </property>
+         <property name="buttonSymbols">
+          <enum>QAbstractSpinBox::NoButtons</enum>
+         </property>
+         <property name="prefix">
+          <string/>
+         </property>
+         <property name="suffix">
+          <string> mm</string>
+         </property>
+         <property name="decimals">
+          <number>1</number>
+         </property>
+         <property name="minimum">
+          <double>2.500000000000000</double>
+         </property>
+         <property name="maximum">
+          <double>1000.000000000000000</double>
+         </property>
+         <property name="value">
+          <double>50.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSlider" name="horizontalSlider">
+         <property name="toolTip">
+          <string>Slide to change snapshot camera focalLength</string>
+         </property>
+         <property name="minimum">
+          <number>21</number>
+         </property>
+         <property name="maximum">
+          <number>150</number>
+         </property>
+         <property name="value">
+          <number>50</number>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="tickPosition">
+          <enum>QSlider::TicksBelow</enum>
+         </property>
+         <property name="tickInterval">
+          <number>5</number>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QGroupBox" name="clip_groupBox">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="title">
+       <string/>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <property name="spacing">
+        <number>10</number>
+       </property>
+       <property name="leftMargin">
+        <number>20</number>
+       </property>
+       <property name="topMargin">
+        <number>2</number>
+       </property>
+       <property name="rightMargin">
+        <number>20</number>
+       </property>
+       <property name="bottomMargin">
+        <number>4</number>
+       </property>
+       <item>
+        <widget class="QLabel" name="near_label">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>near</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QDoubleSpinBox" name="near_doubleSpinBox">
+         <property name="buttonSymbols">
+          <enum>QAbstractSpinBox::NoButtons</enum>
+         </property>
+         <property name="minimum">
+          <double>1.000000000000000</double>
+         </property>
+         <property name="maximum">
+          <double>99999999.000000000000000</double>
+         </property>
+         <property name="value">
+          <double>1.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="far_label">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>far</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QDoubleSpinBox" name="far_doubleSpinBox">
+         <property name="frame">
+          <bool>true</bool>
+         </property>
+         <property name="buttonSymbols">
+          <enum>QAbstractSpinBox::NoButtons</enum>
+         </property>
+         <property name="suffix">
+          <string/>
+         </property>
+         <property name="minimum">
+          <double>1.000000000000000</double>
+         </property>
+         <property name="maximum">
+          <double>100000000.000000000000000</double>
+         </property>
+         <property name="value">
+          <double>100000.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QFrame" name="frame">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>256</width>
+        <height>256</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>256</width>
+        <height>256</height>
+       </size>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::StrongFocus</enum>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::NoFrame</enum>
+      </property>
+      <layout class="QVBoxLayout" name="frame_verticalLayout">
+       <property name="spacing">
+        <number>0</number>
+       </property>
+       <property name="sizeConstraint">
+        <enum>QLayout::SetFixedSize</enum>
+       </property>
+       <property name="margin">
+        <number>0</number>
+       </property>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="pushButton">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>30</height>
+       </size>
+      </property>
+      <property name="statusTip">
+       <string>Create snapshot</string>
+      </property>
+      <property name="text">
+       <string>Snapshot</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>260</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuShow">
+    <property name="title">
+     <string>Show</string>
+    </property>
+    <addaction name="separator"/>
+    <addaction name="actionAll"/>
+    <addaction name="actionNone"/>
+    <addaction name="separator"/>
+    <addaction name="actionNURBS_Curves"/>
+    <addaction name="actionNURBS_Surfaces"/>
+    <addaction name="actionPolygons"/>
+    <addaction name="actionSubdiv_Surfaces"/>
+    <addaction name="actionPlanes"/>
+    <addaction name="actionLights"/>
+    <addaction name="actionCameras"/>
+    <addaction name="actionJoints"/>
+    <addaction name="actionIK_Handles"/>
+    <addaction name="actionDeformers"/>
+    <addaction name="actionFluids"/>
+    <addaction name="actionHair_Systems"/>
+    <addaction name="actionFollicles"/>
+    <addaction name="actionNCloths"/>
+    <addaction name="actionNParticles"/>
+    <addaction name="actionNRigids"/>
+    <addaction name="actionDynamic_Constraints"/>
+    <addaction name="actionLocators"/>
+    <addaction name="actionDimensions"/>
+    <addaction name="actionPivots"/>
+    <addaction name="actionHandles"/>
+    <addaction name="actionTextures"/>
+    <addaction name="actionStrokes"/>
+    <addaction name="actionMotionTrails"/>
+    <addaction name="actionManipulators"/>
+    <addaction name="separator"/>
+    <addaction name="actionNURBS_CVs"/>
+    <addaction name="actionNURBS_Hulls"/>
+    <addaction name="actionGrid"/>
+    <addaction name="actionHUD"/>
+    <addaction name="actionSelection_Highlighting"/>
+   </widget>
+   <widget class="QMenu" name="menuRenderers">
+    <property name="title">
+     <string>Renderers</string>
+    </property>
+    <addaction name="actionDefault_Quality_Rendering"/>
+    <addaction name="actionHigh_Quality_Rendering"/>
+    <addaction name="actionViewport_2_0"/>
+   </widget>
+   <widget class="QMenu" name="menuPreferences">
+    <property name="title">
+     <string>Preferences</string>
+    </property>
+    <addaction name="actionShow_Lens"/>
+    <addaction name="actionShow_Clip_Plane"/>
+    <addaction name="separator"/>
+   </widget>
+   <widget class="QMenu" name="menuLighting">
+    <property name="title">
+     <string>Lighting</string>
+    </property>
+    <addaction name="actionUse_Default_Lighting"/>
+    <addaction name="actionUse_Selected_Lights"/>
+    <addaction name="actionUse_All_Lights"/>
+    <addaction name="separator"/>
+    <addaction name="actionTwo_Sided_Lighting"/>
+    <addaction name="actionShadows"/>
+   </widget>
+   <addaction name="menuShow"/>
+   <addaction name="menuLighting"/>
+   <addaction name="menuRenderers"/>
+   <addaction name="menuPreferences"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionAll">
+   <property name="text">
+    <string>All</string>
+   </property>
+   <property name="modifier" stdset="0">
+    <string>alo</string>
+   </property>
+   <property name="value" stdset="0">
+    <bool>true</bool>
+   </property>
+  </action>
+  <action name="actionNone">
+   <property name="text">
+    <string>None</string>
+   </property>
+   <property name="modifier" stdset="0">
+    <string>alo</string>
+   </property>
+   <property name="value" stdset="0">
+    <bool>false</bool>
+   </property>
+  </action>
+  <action name="actionNURBS_Curves">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>NURBS Curves</string>
+   </property>
+   <property name="modifier" stdset="0">
+    <string>nc</string>
+   </property>
+  </action>
+  <action name="actionNURBS_Surfaces">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>NURBS Surfaces</string>
+   </property>
+   <property name="modifier" stdset="0">
+    <string>ns</string>
+   </property>
+  </action>
+  <action name="actionPolygons">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Polygons</string>
+   </property>
+   <property name="modifier" stdset="0">
+    <string>pm</string>
+   </property>
+  </action>
+  <action name="actionSubdiv_Surfaces">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Subdiv Surfaces</string>
+   </property>
+   <property name="modifier" stdset="0">
+    <string>sds</string>
+   </property>
+  </action>
+  <action name="actionPlanes">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Planes</string>
+   </property>
+   <property name="modifier" stdset="0">
+    <string>pl</string>
+   </property>
+  </action>
+  <action name="actionLights">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Lights</string>
+   </property>
+   <property name="modifier" stdset="0">
+    <string>lt</string>
+   </property>
+  </action>
+  <action name="actionCameras">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Cameras</string>
+   </property>
+   <property name="modifier" stdset="0">
+    <string>ca</string>
+   </property>
+  </action>
+  <action name="actionJoints">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Joints</string>
+   </property>
+   <property name="modifier" stdset="0">
+    <string>j</string>
+   </property>
+  </action>
+  <action name="actionIK_Handles">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>IK Handles</string>
+   </property>
+   <property name="modifier" stdset="0">
+    <string>ikh</string>
+   </property>
+  </action>
+  <action name="actionDeformers">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Deformers</string>
+   </property>
+   <property name="modifier" stdset="0">
+    <string>df</string>
+   </property>
+  </action>
+  <action name="actionFluids">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Fluids</string>
+   </property>
+   <property name="modifier" stdset="0">
+    <string>fl</string>
+   </property>
+  </action>
+  <action name="actionHair_Systems">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Hair Systems</string>
+   </property>
+   <property name="modifier" stdset="0">
+    <string>hs</string>
+   </property>
+  </action>
+  <action name="actionFollicles">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Follicles</string>
+   </property>
+   <property name="modifier" stdset="0">
+    <string>fo</string>
+   </property>
+  </action>
+  <action name="actionNCloths">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>nCloths</string>
+   </property>
+   <property name="modifier" stdset="0">
+    <string>ncl</string>
+   </property>
+  </action>
+  <action name="actionNParticles">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>nParticles</string>
+   </property>
+   <property name="modifier" stdset="0">
+    <string>npa</string>
+   </property>
+  </action>
+  <action name="actionNRigids">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>nRigids</string>
+   </property>
+   <property name="modifier" stdset="0">
+    <string>nr</string>
+   </property>
+  </action>
+  <action name="actionDynamic_Constraints">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Dynamic Constraints</string>
+   </property>
+   <property name="modifier" stdset="0">
+    <string>dc</string>
+   </property>
+  </action>
+  <action name="actionLocators">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Locators</string>
+   </property>
+   <property name="modifier" stdset="0">
+    <string>lc</string>
+   </property>
+  </action>
+  <action name="actionDimensions">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Dimensions</string>
+   </property>
+   <property name="modifier" stdset="0">
+    <string>dim</string>
+   </property>
+  </action>
+  <action name="actionPivots">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Pivots</string>
+   </property>
+   <property name="modifier" stdset="0">
+    <string>pv</string>
+   </property>
+  </action>
+  <action name="actionHandles">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Handles</string>
+   </property>
+   <property name="modifier" stdset="0">
+    <string>ha</string>
+   </property>
+  </action>
+  <action name="actionTextures">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Textures</string>
+   </property>
+   <property name="modifier" stdset="0">
+    <string>tx</string>
+   </property>
+  </action>
+  <action name="actionStrokes">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Strokes</string>
+   </property>
+   <property name="modifier" stdset="0">
+    <string>str</string>
+   </property>
+  </action>
+  <action name="actionMotionTrails">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>MotionTrails</string>
+   </property>
+   <property name="modifier" stdset="0">
+    <string/>
+   </property>
+  </action>
+  <action name="actionManipulators">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Manipulators</string>
+   </property>
+   <property name="modifier" stdset="0">
+    <string>m</string>
+   </property>
+  </action>
+  <action name="actionNURBS_CVs">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>NURBS CVs</string>
+   </property>
+   <property name="modifier" stdset="0">
+    <string>cv</string>
+   </property>
+  </action>
+  <action name="actionNURBS_Hulls">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>NURBS Hulls</string>
+   </property>
+   <property name="modifier" stdset="0">
+    <string>hu</string>
+   </property>
+  </action>
+  <action name="actionGrid">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Grid</string>
+   </property>
+   <property name="modifier" stdset="0">
+    <string>gr</string>
+   </property>
+  </action>
+  <action name="actionHUD">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>HUD</string>
+   </property>
+   <property name="modifier" stdset="0">
+    <string>hud</string>
+   </property>
+  </action>
+  <action name="actionSelection_Highlighting">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Selection Highlighting</string>
+   </property>
+   <property name="modifier" stdset="0">
+    <string>sel</string>
+   </property>
+  </action>
+  <action name="actionDefault_Quality_Rendering">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Default Quality Rendering</string>
+   </property>
+   <property name="value" stdset="0">
+    <string>base_OpenGL_Renderer</string>
+   </property>
+  </action>
+  <action name="actionHigh_Quality_Rendering">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>High Quality Rendering</string>
+   </property>
+   <property name="visible">
+    <bool>true</bool>
+   </property>
+   <property name="value" stdset="0">
+    <string>hwRender_OpenGL_Renderer</string>
+   </property>
+  </action>
+  <action name="actionViewport_2_0">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Viewport 2.0</string>
+   </property>
+   <property name="value" stdset="0">
+    <string>ogsRenderer</string>
+   </property>
+  </action>
+  <action name="actionShow_Lens">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show Lens</string>
+   </property>
+  </action>
+  <action name="actionShow_Clip_Plane">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show Clip Plane</string>
+   </property>
+  </action>
+  <action name="actionUse_Default_Lighting">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Use Default Lighting</string>
+   </property>
+   <property name="value" stdset="0">
+    <string>default</string>
+   </property>
+  </action>
+  <action name="actionUse_All_Lights">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Use All Lights</string>
+   </property>
+   <property name="value" stdset="0">
+    <string>all</string>
+   </property>
+  </action>
+  <action name="actionTwo_Sided_Lighting">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Two-Sided Lighting</string>
+   </property>
+   <property name="modifier" stdset="0">
+    <string>tsl</string>
+   </property>
+  </action>
+  <action name="actionShadows">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Shadows</string>
+   </property>
+   <property name="modifier" stdset="0">
+    <string>sdw</string>
+   </property>
+  </action>
+  <action name="actionUse_Selected_Lights">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Use Selected Lights</string>
+   </property>
+   <property name="value" stdset="0">
+    <string>selected</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

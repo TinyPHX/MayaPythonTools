@@ -1,0 +1,57 @@
+// ----------------------------------------------------------------------------------------------
+//
+// SHAPES_install.mel
+//
+// adds the SHAPES button to the current shelf
+//
+// Ingo Clemens
+// www.braverabbit.com
+//
+// copyright brave rabbit, Ingo Clemens 2014
+//
+// created: 2013-11-01
+// last update: 2014-01-08
+//
+// ----------------------------------------------------------------------------------------------
+
+// ----------------------------------------------------------------------------------------------
+//
+// THE PROGRAM IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, 
+// INCLUDING, BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR 
+// PURPOSE. IN NO EVENT WILL THE AUTHOR BE LIABLE TO YOU FOR ANY DAMAGES, INCLUDING INCIDENTAL 
+// OR CONSEQUENTIAL DAMAGES, ARISING OUT OF THE USE OF THE PROGRAM, EVEN IF ADVISED OF THE 
+// POSSIBILITY OF SUCH DAMAGES. YOU ACKNOWLEDGE THAT YOU HAVE READ THIS LICENSE, UNDERSTAND 
+// IT AND AGREE TO BE BOUND BY ITS TERMS AS THE COMPLETE AND EXCLUSIVE STATEMENT OF THE 
+// AGREEMENT BETWEEN ME, SUPERSEDING ANY PROPOSAL OR PRIOR AGREEMENT, ORAL OR WRITTEN, AND 
+// ANY OTHER COMMUNICATIONS BETWEEN US RELATING TO THE SUBJECT MATTER OF THIS LICENSE.
+//
+// ----------------------------------------------------------------------------------------------
+
+// ----------------------------------------------------------------------------------------------
+//
+// usage:
+//
+// execute the following command
+// SHAPES_install
+//
+// ----------------------------------------------------------------------------------------------
+
+// ----------------------------------------------------------------------------------------------
+//
+//	USE AND MODIFY AT YOUR OWN RISK!!
+//
+// ----------------------------------------------------------------------------------------------
+
+global proc SHAPES_install()
+{
+	global string $gShelfTopLevel;
+	string $shelf = `tabLayout -q -st $gShelfTopLevel`;
+	if ($shelf != "")
+	{
+		string $confirm = `confirmDialog 	-t "Confirm" 
+											-m ("Do you want to add the SHAPES button to the shelf '" + $shelf + "'?")
+    										-b "OK" -b "Cancel" -db "OK" -cb "Cancel" -ds "Cancel"`;
+    	if ($confirm == "OK")
+			shelfButton -p $shelf -stp "python" -st "iconOnly" -i "SHAPES.png" -label "SHAPES" -c "import SHAPES\nSHAPES._buildSHAPESUI()\n";
+	}
+}

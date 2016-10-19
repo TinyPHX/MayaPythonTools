@@ -1,0 +1,2 @@
+SHAPES;
+evalDeferred("dockControl -e -r SHAPESDock");

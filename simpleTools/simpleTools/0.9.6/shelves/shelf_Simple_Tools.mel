@@ -1,0 +1,33 @@
+global proc shelf_Simple_Tools () {
+    global string $gBuffStr;
+    global string $gBuffStr0;
+    global string $gBuffStr1;
+
+
+    shelfButton
+        -enableCommandRepeat 1
+        -enable 1
+        -width 35
+        -height 35
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "open Simple Tools' Asset Manager" 
+        -enableBackground 0
+        -align "center" 
+        -label "Asset Manager" 
+        -labelOffset 0
+        -font "plainLabelFont" 
+        -overlayLabelColor 0 0 1 
+        -overlayLabelBackColor 0 0 0 0 
+        -image "toonGetExample.png" 
+        -image1 "toonGetExample.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "def env_check():\n\t\"\"\"\n\tCheck for env setting. Shelf button func.\n\t\"\"\"\n\timport os, sys\n\timport maya.cmds as mc\n\tenv = 'SIMPLE_TOOLS_ROOT'\n\tmodules = 'Modules'\n\ttitle = 'Simple Tools Setup'\n\tos_ = mc.about(os = True)\n\tmaya = mc.about(v = True)\n\tif len(maya) == 4:\n\t\tmaya = maya + ' x64'\n\tsmp_tools_root = False\n\tproceed = True\n\tif not os.getenv(env):\n\t\tmessage = env + ' environment variable is not correctly configured.\\nDo you want to set it now? You can still run the asset manager without setting it.'\n\t\tconfirm = mc.confirmDialog(t = title, m = message, b = ['Yes', 'No', 'Cancel'], db = 'Yes', cb = 'Cancel')\n\t\tif confirm != 'Cancel':\n\t\t\tsmpTools = mc.fileDialog2(ds = 2, cap = \"Select Simple Tools folder\", okc = \"Select\", fm = 3)\n\t\t\tif smpTools != None:\n\t\t\t\tsmp_tools_root = smpTools[0]\n\t\t\t\tif confirm == 'Yes':\n\t\t\t\t\tif mc.about(win = True):\n\t\t\t\t\t\tcommand = 'SETX ' + env + ' ' + smpTools[0]\n\t\t\t\t\t\ttry:\n\t\t\t\t\t\t\tos.popen(command)\n\t\t\t\t\t\texcept:\n\t\t\t\t\t\t\tmessage = env + ' was NOT succesfully set to: ' + smpTools[0] + '\\nError: ' + command\n\t\t\t\t\t\telse:\n\t\t\t\t\t\t\tmessage = env + ' was succesfully set to: ' + smpTools[0]\n\t\t\t\t\t\t\tos.environ[env] = smpTools[0]\n\t\t\t\t\t\tmc.confirmDialog(t = title, m = message, b = ['OK'], db = 'OK', cb = 'OK')\n\t\t\t\t\telse:\n\t\t\t\t\t\tpass\n\t\t\t\n\t\telse:\n\t\t\tproceed = False\n\t\n\tif proceed:\n\t\tif not smp_tools_root:\n\t\t\tsmp_tools_root = os.getenv(env)\n\t\terror = []\n\t\tfolders = [smp_tools_root + '/st_assets/' + maya, smp_tools_root + '/' +  modules, smp_tools_root + '/' +  modules + '/' + os_, smp_tools_root + '/' +  modules + '/' + os_ + '/' + maya]\n\t\texists = []\n\t\tappended = []\n\t\tfor f in folders:\n\t\t\tif not os.path.isdir(f):\n\t\t\t\terror.append(f)\n\t\tif not error:\n\t\t\tfor f in folders:\n\t\t\t\tif f not in sys.path:\n\t\t\t\t\tsys.path.append(f)\n\t\t\t\t\tappended.append(f)\n\t\t\t\telse:\n\t\t\t\t\texists.append(f)\n\t\telse:\n\t\t\tmessage  = 'The folder structure for Simple Tools ran into problems.\\nThese folders were not found.\\n'\n\t\t\tfor e in error:\n\t\t\t\tmessage = message + e + '\\n'\n\t\t\tmessage = message + ''\n\t\t\tmc.confirmDialog(t = title, m = message, b = ['OK'], db = 'OK', cb = 'OK')\n\t\t\treturn False\n\t\tif len(folders) != len(exists) + len(appended):\n\t\t\tmessage = 'Problem occured during sys.path.append.\\nError: ' + str(len(folder)) + ':' + str(len(exists)) + ':' + str(len(appended))\n\t\t\tmc.confirmDialog(t = title, m = message, b = ['OK'], db = 'OK', cb = 'OK')\n\t\t\treturn False\n\t\telse:\n\t\t\treturn maya\n\telse:\n\t\treturn False\n\nproceed = env_check()\nif proceed:\n\timport st_assets\n\treload(st_assets)\n\tst_assets.main()\n" 
+        -sourceType "python" 
+        -commandRepeatable 1
+    ;
+
+} 

@@ -1,0 +1,4 @@
+{
+string $sel[] = `ls -sl`;
+lookThru $sel[0];
+};

@@ -1,0 +1,2 @@
+import TheRiggingToolbox_v130_Maya2013
+TheRiggingToolbox_v130_Maya2013.jbRiggingToolboxUI()
