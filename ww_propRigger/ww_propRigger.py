@@ -27,6 +27,12 @@ def propRigger(parList):
 	globalCtrl_grp = cmds.group(em = True, n = propObj + '_prop_ctrl_grp')
 	cmds.parent(globalCtrl, globalCtrl_grp)
 	cmds.parentConstraint(globalCtrl, propObj, mo = True)
+	cmds.scaleConstraint(globalCtrl, propObj, mo = True)
+	
+	# -build rig grp and parent everything under this group
+	globalRigGrp = cmds.group(em = True, n = '%s_prop_rig_grp' %propObj[:-4])
+	cmds.parent(globalCtrl_grp, globalRigGrp)
+	cmds.parent(propObj, globalRigGrp)
 	
 	#-make new space matching attr "parentTo"
 	formatEnum = ''
