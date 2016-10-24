@@ -40,7 +40,7 @@ if cmds.window('poseSaver',exists=True):
 
 def GetName(inName):
 	if ':' in inName:
-		return inName.split(':')[1]
+		return inName.split(':')[-1]
 	else:
 		return inName
 

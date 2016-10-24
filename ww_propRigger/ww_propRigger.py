@@ -5,7 +5,12 @@ import maya.mel as mel
 take an object and make it a prop
 - control structure should NOT interfere with any local rig stuff.  ie: jnts or deformers
 '''
-	
+def RemoveNameSpace(inString):
+	if ':' in inString:
+		return inString.split(':')[-1]
+	else:
+		return inString
+		
 def propRigger(parList):
 	#-get object from current selection
 	propObj = cmds.ls(sl = True)[0]
@@ -20,6 +25,10 @@ def propRigger(parList):
 	
 	for each in parList:	
 		print 'Assigning "%s" as a parent to our prop.'%each
+		
+	parList_noNS = []
+	for every in parList:
+		parList_noNS.append(RemoveNameSpace(every))	
 		
 	#-build global control structure
 	raw_globalCtrl = mel.eval('circle -c 0 0 0 -nr 0 1 0 -sw 360 -r 1 -d 3 -ut 0 -tol 0 -s 8 -ch 0;')
@@ -56,4 +65,4 @@ def propRigger(parList):
 		for n in ['R','G','B']:
 			cmds.setAttr('%s.colorIfFalse%s'%(condNode_list[i], n), 0)
 			cmds.setAttr('%s.colorIfTrue%s'%(condNode_list[i], n), 1)
-		cmds.connectAttr('%s.outColor.outColorR'%condNode_list[i], '%s.%sW%i'%(parCon_list[i], parList[i], i), f = True)
+		cmds.connectAttr('%s.outColor.outColorR'%condNode_list[i], '%s.%sW%i'%(parCon_list[i], parList_noNS[i], i), f = True)
