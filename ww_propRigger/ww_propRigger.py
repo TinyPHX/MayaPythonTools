@@ -47,9 +47,9 @@ def propRigger(parList):
 	formatEnum = ''
 	for i in range(len(parList)):
 		if i == 0:
-			formatEnum += parList[i]
+			formatEnum += parList_noNS[i]
 		else:
-			formatEnum += ':%s' %parList[i]
+			formatEnum += ':%s' %parList_noNS[i]
 			
 	cmds.addAttr(globalCtrl, ln = 'parentTo', at = 'enum', en = formatEnum)
 	cmds.setAttr('%s.parentTo'%globalCtrl, k = True)
