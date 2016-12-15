@@ -117,21 +117,26 @@ def pastePose(*args):
 			currentSel_name = GetName(currentSel[i])	
 			#findAttrs
 			attrs = cmds.listAttr(currentSel[i], k = True)
-			for x in range(len(attrs)):
-				newVal = dataFile[currentSel_name][x][attrs[x]]
-				#check current value and compare with new value
-				currentVal = cmds.getAttr(currentSel[i] + '.%s'%attrs[x])
-				if not currentVal == newVal:
-					try:
-						if CHECKANIM: #yes/True
-							cmds.setKeyframe('%s.%s'%(currentSel[i], attrs[x]))
-							cmds.currentTime(crntTime + slideAmnt, update = True, edit = True)
-						cmds.setAttr('%s.%s'%(currentSel[i], attrs[x]), newVal)
-						if CHECKANIM: #yes/True
-							cmds.setKeyframe('%s.%s'%(currentSel[i], attrs[x]))
-							cmds.currentTime(crntTime, update = True, edit = True)
-					except RuntimeError as re:
-						print re
+			currentDict = dataFile[currentSel_name]
+			for x in range(len(currentDict)):
+				for key in currentDict[x]:
+					#print "key: %s, value: %s"%(key, currentDict[x][key])
+					#check if the currently selected object has an attr that matches the name of the key we have stored
+					if cmds.listAttr(currentSel[i], st = key):
+						#check current value and compare with new value
+						currentVal = cmds.getAttr('%s.%s'%(currentSel[i], key))
+						if not currentVal == currentDict[x][key]:
+							try:
+								if CHECKANIM: #yes/True
+									cmds.setKeyframe('%s.%s'%(currentSel[i], key))
+									cmds.currentTime(crntTime + slideAmnt, update = True, edit = True)
+								cmds.setAttr('%s.%s'%(currentSel[i], key), currentDict[x][key])
+								if CHECKANIM: #yes/True
+									cmds.setKeyframe('%s.%s'%(currentSel[i], key))
+									cmds.currentTime(crntTime, update = True, edit = True)
+							except RuntimeError as re:
+								print re
+				
 
 #check animCheck_btn
 def CheckAnimBtn(*args):
