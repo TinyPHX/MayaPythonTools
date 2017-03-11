@@ -114,7 +114,7 @@ def MakePropSimple(propObj):
 	globalRigGrp = cmds.group(em = True, n = '%s_prop_rig_grp' %propObj[:-4])
 	cmds.parent(globalCtrl_grp, globalRigGrp)
 	cmds.parent(propObj, globalRigGrp)
-	
+
 	#-make new space matching attr "parentTo"
 	formatEnum = ''
 	for i in range(len(parList)):
@@ -145,7 +145,8 @@ def MakePropSimple(propObj):
 				cmds.setAttr('%s.colorIfFalse%s'%(condNode_list[i-1], n), 0)
 				cmds.setAttr('%s.colorIfTrue%s'%(condNode_list[i-1], n), 1)
 			cmds.connectAttr('%s.outColor.outColorR'%condNode_list[i-1], '%s.%sW%i'%(parCon_list[i-1], parList_noNS[i], (i-1)), f = True)
-		
+
+	
 def propRigger(parList):
 	#-get object from current selection
 	propObj = cmds.ls(sl = True)[0]
@@ -156,3 +157,4 @@ def propRigger(parList):
 		MakePropComplex(propObj)
 	else:
 		MakePropSimple(propObj)
+		

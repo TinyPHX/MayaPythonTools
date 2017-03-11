@@ -3,7 +3,10 @@ import random
 
 def RemoveNS(inString):
 	if ':' in inString:
-		return inString.split(':')[-1]
+		if '[' in inString: #odd face selection event case
+			return inString.split(':')[-2] + ':' + inString.split(':')[-1]
+		else:
+			return inString.split(':')[-1]
 	else:
 		return inString
 
@@ -27,13 +30,13 @@ def CorrectNS(inString):
 		trialObj = RemoveNS(inString)
 		if cmds.objExists('%s:%s'%(ns_list[i], trialObj)):
 			return ns_list[i]
-	
 	#if we get this far without exiting the function, then we have no namespace matches, therefore should return an empty string
 	return ''
 
 def MakeRandSurfaceShader(sel_list, name):
 	#new nodes
 	newShader = cmds.shadingNode('surfaceShader', asShader = True, n = '%s_surfaceShader_mat'%name)
+	'''
 	newRGBtoHSV = cmds.createNode('rgbToHsv', n = '%s_surfaceShader_rgbhsv'%name)
 	newHSVtoRGB = cmds.createNode('hsvToRgb', n = '%s_surfaceShader_hsvrgb'%name)
 	newSatMult = cmds.createNode('multiplyDivide', n = '%s_surfaceShader_multDiv'%name)
@@ -47,6 +50,9 @@ def MakeRandSurfaceShader(sel_list, name):
 	#setting attributes
 	cmds.setAttr('%s.operation'%newSatMult, 2) #divide
 	cmds.setAttr('%s.inRgb'%newRGBtoHSV, random.uniform(0,1), random.uniform(0,1), random.uniform(0,1), type = 'double3')
+	'''
+	cmds.setAttr('%s.outColor' %newShader, random.uniform(0,1), random.uniform(0,1), random.uniform(0,1), type = 'double3')
+
 	
 	#assignment to geo
 	for sel in sel_list:
@@ -57,7 +63,6 @@ def MakeRandSurfaceShader(sel_list, name):
 		else:
 			appendedSel = '%s:%s'%(sel_NS, sel_noNS)
 		cmds.select(appendedSel)
-		cmds.hyperShade(assign = newShader)
-	
+		cmds.hyperShade(assign = newShader)	
 	
 	
